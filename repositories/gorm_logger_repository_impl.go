@@ -20,3 +20,14 @@ func (g *gormLoggerRepository) ListAll() (*[]models.Log, error) {
 func (g *gormLoggerRepository) Log(log *models.Log) error {
 	return g.db.Create(log).Error
 }
+
+func (g *gormLoggerRepository) ListByAppName(appName string) (*[]models.Log, error) {
+	// TO-DO: pagination
+	var logs []models.Log
+	result := g.db.Where("AppName = ?", appName).Find(&logs)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &logs, nil
+}
