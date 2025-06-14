@@ -2,7 +2,10 @@ package main
 
 import (
 	"github.com/LXSCA7/go-logger/config"
+	"github.com/LXSCA7/go-logger/handlers"
 	"github.com/LXSCA7/go-logger/repositories"
+	"github.com/LXSCA7/go-logger/routes"
+	"github.com/LXSCA7/go-logger/services"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -19,9 +22,12 @@ func main() {
 	}
 
 	repo := repositories.NewGormLoggerRepository(db)
-	// service
-	// create dependencies
-	// setup routes
+	svc := services.NewLoggerService(repo)
+	deps := routes.RouteDependencies{
+		App:     app,
+		Handler: handlers.NewLoggerHandler(svc),
+	}
 
+	routes.SetupRoutes(deps)
 	app.Listen(":" + vars.ApiPort)
 }
