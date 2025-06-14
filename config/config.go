@@ -20,12 +20,14 @@ func LoadEnvVars() (*models.EnvVars, error) {
 	}
 
 	envVars := &models.EnvVars{
-		ApiPort: os.Getenv("API_PORT"),
-		ApiKey:  os.Getenv("API_KEY"),
-		DbHost:  os.Getenv("DB_HOST"),
-		DbUser:  os.Getenv("DB_USER"),
-		DbPass:  os.Getenv("DB_PASS"),
-		DbName:  os.Getenv("DB_NAME"),
+		ApiPort:    os.Getenv("API_PORT"),
+		ApiKey:     os.Getenv("API_KEY"),
+		DbHost:     os.Getenv("DB_HOST"),
+		DbUser:     os.Getenv("DB_USER"),
+		DbPass:     os.Getenv("DB_PASS"),
+		DbName:     os.Getenv("DB_NAME"),
+		DbPort:     os.Getenv("DB_PORT"),
+		DbTimeZone: os.Getenv("DB_TIMEZONE"),
 	}
 
 	if err := validateEnv(envVars.ApiPort, "API_PORT"); err != nil {
@@ -51,7 +53,7 @@ func LoadEnvVars() (*models.EnvVars, error) {
 }
 
 func ConnectDB(vars *models.EnvVars) (*gorm.DB, error) {
-	dsn := fmt.Sprint("host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=%v", vars.DbHost, vars.DbUser, vars.DbPass, vars.DbName, vars.DbPort, vars.DbTimeZone)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=%s", vars.DbHost, vars.DbUser, vars.DbPass, vars.DbName, vars.DbPort, vars.DbTimeZone)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
@@ -73,5 +75,5 @@ func validateEnv(value string, key string) error {
 }
 
 func runMigrations(db *gorm.DB) error {
-	return db.AutoMigrate(&models.LogPayload{})
+	return db.AutoMigrate(&models.Log{})
 }
