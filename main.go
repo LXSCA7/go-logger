@@ -26,6 +26,7 @@ func main() {
 	deps := routes.RouteDependencies{
 		App:     app,
 		Handler: handlers.NewLoggerHandler(svc),
+		ApiKey:  vars.ApiKey,
 	}
 
 	routes.SetupRoutes(deps)
