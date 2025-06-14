@@ -27,3 +27,23 @@ func (h *LoggerHandler) Log(c *fiber.Ctx) error {
 
 	return c.SendStatus(fiber.StatusCreated)
 }
+
+func (h *LoggerHandler) ListAllByAppName(c *fiber.Ctx) error {
+	appName := c.Params("appName")
+	if appName == "" {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "App not found",
+		})
+	}
+
+	logs, err := h.loggerService.GetLogByAppName(appName)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": err.Error,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"logs": logs,
+	})
+}

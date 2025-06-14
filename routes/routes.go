@@ -13,9 +13,12 @@ type RouteDependencies struct {
 }
 
 func SetupRoutes(deps RouteDependencies) {
-	deps.App.Get("/", func(c *fiber.Ctx) error {
+	deps.App.Get("/", middlewares.ApiKeyAuth(deps.ApiKey), func(c *fiber.Ctx) error {
 		return c.JSON("hello, world!")
 	})
+
+	deps.App.Get("/logs", middlewares.ApiKeyAuth(deps.ApiKey))
+	deps.App.Get("/logs/:appName", middlewares.ApiKeyAuth(deps.ApiKey), deps.Handler.ListAllByAppName)
 
 	deps.App.Post("/log", middlewares.ApiKeyAuth(deps.ApiKey), deps.Handler.Log)
 }

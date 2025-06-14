@@ -27,5 +27,5 @@ func (l *loggerServiceImpl) GetLogByAppName(appName string) (*[]models.Log, erro
 }
 
 func (l *loggerServiceImpl) ListAllLogs() (*[]models.Log, error) {
-	panic("unimplemented")
+	return l.repo.ListAll()
 }
