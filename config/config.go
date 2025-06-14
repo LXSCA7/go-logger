@@ -57,6 +57,11 @@ func ConnectDB(vars *models.EnvVars) (*gorm.DB, error) {
 		return nil, err
 	}
 
+	err = runMigrations(db)
+	if err != nil {
+		return nil, err
+	}
+
 	return db, nil
 }
 
@@ -65,4 +70,8 @@ func validateEnv(value string, key string) error {
 		return fmt.Errorf("Required environment variable '%s' was not found.", key)
 	}
 	return nil
+}
+
+func runMigrations(db *gorm.DB) error {
+	return db.AutoMigrate(&models.LogPayload{})
 }
