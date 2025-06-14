@@ -7,6 +7,8 @@ import (
 
 	"github.com/LXSCA7/go-logger/models"
 	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func LoadEnvVars() (*models.EnvVars, error) {
@@ -46,6 +48,16 @@ func LoadEnvVars() (*models.EnvVars, error) {
 	}
 
 	return envVars, nil
+}
+
+func ConnectDB(vars *models.EnvVars) (*gorm.DB, error) {
+	dsn := fmt.Sprint("host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=%v", vars.DbHost, vars.DbUser, vars.DbPass, vars.DbName, vars.DbPort, vars.DbTimeZone)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }
 
 func validateEnv(value string, key string) error {
