@@ -1,0 +1,26 @@
+services:
+  go-logger:
+    build: .
+    container_name: go_logger
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    restart: unless-stopped
+  postgres:
+    image: postgres:17-alpine3.22
+    container_name: go_logger_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB: ${DB_NAME}
+      - POSTGRES_USER: ${DB_USER}
+      - POSTGRES_PASS: ${DB_PASS}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres_data:
