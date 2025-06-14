@@ -1,6 +1,8 @@
 # GO-LOGGER
 
-Aplicação feita para centralizar os logs das minhas APIs.
+Um microserviço centralizador de logs, construído em Go, projetado para receber, armazenar e gerenciar logs de múltiplas aplicações via uma API REST simples.
+
+O serviço utiliza **Fiber** para alta performance na recepção de requisições HTTP, **GORM** para interação com o banco de dados e **PostgreSQL** para um armazenamento de dados.
 
 
 ## Como rodar?
@@ -23,16 +25,6 @@ cd go-logger
     cp .env.example .env
     ```
 2.  Abra o arquivo `.env` e preencha com os valores desejados.
-
-| Variável | Descrição | Exemplo |
-| :--- | :--- | :--- |
-| `APP_ENV` | Define o ambiente (`development` ou `production`). Em `production`, o .env não é carregado. | `development` |
-| `API_PORT` | Porta em que a API irá rodar. | `3000` |
-| `DB_HOST` | Host do banco de dados. Use `localhost` para local, `postgres` para Docker. | `postgres` |
-| `DB_PORT` | Porta do banco de dados. | `5432` |
-| `DB_USER` | Usuário de conexão com o banco. | `postgres` |
-| `DB_PASS` | Senha de conexão com o banco. | `yourSuperSecretPassword` |
-| `DB_NAME` | Nome do banco de dados a ser utilizado. | `go_logger_db` |
 
 ### 3. Rode o Projeto
 
