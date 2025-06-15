@@ -2,7 +2,7 @@
 
 Um microserviço centralizador de logs, construído em Go, projetado para receber, armazenar e gerenciar logs de múltiplas aplicações via uma API REST simples.
 
-O serviço utiliza **Fiber** para alta performance na recepção de requisições HTTP, **GORM** para interação com o banco de dados e **PostgreSQL** para um armazenamento de dados.
+O serviço utiliza Fiber para alta performance na recepção de requisições HTTP, GORM para interação com o banco de dados e PostgreSQL para um armazenamento de dados.
 
 
 ## Como rodar?
@@ -26,7 +26,14 @@ cd go-logger
     ```
 2.  Abra o arquivo `.env` e preencha com os valores desejados.
 
-### 3. Rode o Projeto
+### 3. Configure as aplicações autorizadas:
+1. Copie o arquivo de exemplo:
+    ```bash
+    cp apps.json.example apps.json
+    ```
+2. Abra o arquivo `apps.json` e preencha com as aplicações desejadas.
+
+### 4. Rode o Projeto
 
 Você pode rodar o projeto de duas formas:
 
