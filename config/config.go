@@ -21,14 +21,15 @@ func LoadEnvVars() (*models.EnvVars, error) {
 	}
 
 	envVars := &models.EnvVars{
-		ApiPort:    os.Getenv("API_PORT"),
-		ApiKey:     os.Getenv("API_KEY"),
-		DbHost:     os.Getenv("DB_HOST"),
-		DbUser:     os.Getenv("DB_USER"),
-		DbPass:     os.Getenv("DB_PASS"),
-		DbName:     os.Getenv("DB_NAME"),
-		DbPort:     os.Getenv("DB_PORT"),
-		DbTimeZone: os.Getenv("DB_TIMEZONE"),
+		ApiPort:            os.Getenv("API_PORT"),
+		ApiKey:             os.Getenv("API_KEY"),
+		DbHost:             os.Getenv("DB_HOST"),
+		DbUser:             os.Getenv("DB_USER"),
+		DbPass:             os.Getenv("DB_PASS"),
+		DbName:             os.Getenv("DB_NAME"),
+		DbPort:             os.Getenv("DB_PORT"),
+		DbTimeZone:         os.Getenv("DB_TIMEZONE"),
+		SkipAppValidations: os.Getenv("SKIP_APP_VALIDATIONS") == "true",
 	}
 
 	if err := validateEnv(envVars.ApiPort, "API_PORT"); err != nil {
@@ -79,19 +80,56 @@ func runMigrations(db *gorm.DB) error {
 	return db.AutoMigrate(&models.Log{})
 }
 
-func LoadApps() []string {
+func LoadApps(skip bool) []string {
+	if skip {
+		return []string{}
+	}
+
 	var payload struct {
 		Apps []string
 	}
+
 	file, err := os.ReadFile("apps.json")
 	if err != nil {
-		panic("Can not read apps.json file. " + err.Error())
+		panic(fmt.Sprintf(
+			"\x1b[31mFailed to read or parse 'apps.json'. This might be due to a missing or corrupted file.\n"+
+				"\x1b[33mDid you copy the 'apps.json.example' file to 'apps.json'? Read the README.md for more information.\n"+
+				"\x1b[31mError message: %v\x1b[0m",
+			err,
+		))
 	}
 
 	err = json.Unmarshal(file, &payload)
 	if err != nil {
-		panic("Can not unmarshal apps.json file. " + err.Error())
+		panic(fmt.Sprintf(
+			"\x1b[31mFailed to parse 'apps.json'.\n"+
+				"\x1b[33mDid you copy the 'apps.json.example' file to 'apps.json'? Read the README.md for more information.\n"+
+				"\x1b[31mError message: %v\x1b[0m",
+			err,
+		))
 	}
 
+	if payload.Apps == nil || len(payload.Apps) == 0 {
+		panic(fmt.Sprintf(
+			"\x1b[31mThe 'apps.json' file does not contain the expected 'apps' array, or it's empty.\n" +
+				"\x1b[33mPlease ensure 'apps.json' has a top-level JSON object with an 'apps' field containing a list of strings.\n" +
+				"\x1b[33mFor example: {\"apps\": [\"app1\", \"app2\"]}\x1b[0m",
+		))
+	}
 	return payload.Apps
+}
+
+func Validate(vars *models.EnvVars) {
+	if os.Getenv("APP_ENV") != "production" && vars.SkipAppValidations {
+		fmt.Println("\n\x1b[31m" +
+			"[SECURITY WARNING]: You are skipping the validation of authorized applications.\n" +
+			"This is UNSAFE and CAN NOT be used in PRODUCTION environments.\x1b[0m")
+	}
+
+	if os.Getenv("APP_ENV") == "production" && vars.SkipAppValidations {
+		panic("\n\x1b[31m" +
+			"Error: You are skipping the validation of authorized applications.\n" +
+			"This is UNSAFE and CAN NOT be used in PRODUCTION environments.\n" +
+			"For fix this error, change the environment variable 'SKIP_APP_VALIDATIONS' to 'false' and set the allowed apps on 'apps.json'\x1b[0m")
+	}
 }

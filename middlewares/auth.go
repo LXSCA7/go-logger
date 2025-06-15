@@ -23,13 +23,17 @@ func ApiKeyAuth(apiKey string) fiber.Handler {
 	}
 }
 
-func LoggerAuth(authorizedApps []string) fiber.Handler {
+func ApplicationsAuth(authorizedApps []string) fiber.Handler {
 	var payload models.LogPayload
 	return func(c *fiber.Ctx) error {
 		if err := c.BodyParser(&payload); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"error": "unexpected body",
 			})
+		}
+
+		if len(authorizedApps) == 0 {
+			return c.Next()
 		}
 
 		for _, appName := range authorizedApps {
