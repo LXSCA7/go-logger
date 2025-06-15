@@ -23,6 +23,7 @@ func SetupRoutes(deps RouteDependencies) {
 	// deps.App.Get("/logs", implement)
 	deps.App.Get("/logs/:appName", deps.Handler.ListAllByAppName)
 
-	deps.App.Post("/log", middlewares.ApplicationsAuth(deps.AllowedApps))
-
+	if deps.SkipAppValidations {
+		deps.App.Post("/log", middlewares.ApplicationsAuth(deps.AllowedApps), deps.Handler.Log)
+	}
 }
