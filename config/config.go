@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -76,4 +77,21 @@ func validateEnv(value string, key string) error {
 
 func runMigrations(db *gorm.DB) error {
 	return db.AutoMigrate(&models.Log{})
+}
+
+func LoadApps() []string {
+	var payload struct {
+		Apps []string
+	}
+	file, err := os.ReadFile("apps.json")
+	if err != nil {
+		panic("Can not read apps.json file. " + err.Error())
+	}
+
+	err = json.Unmarshal(file, &payload)
+	if err != nil {
+		panic("Can not unmarshal apps.json file. " + err.Error())
+	}
+
+	return payload.Apps
 }

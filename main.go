@@ -12,9 +12,7 @@ import (
 func main() {
 	app := fiber.New()
 	vars, err := config.LoadEnvVars()
-	if err != nil {
-		panic(err.Error())
-	}
+	allowedApps := config.LoadApps()
 
 	db, err := config.ConnectDB(vars)
 	if err != nil {
@@ -24,9 +22,10 @@ func main() {
 	repo := repositories.NewGormLoggerRepository(db)
 	svc := services.NewLoggerService(repo)
 	deps := routes.RouteDependencies{
-		App:     app,
-		Handler: handlers.NewLoggerHandler(svc),
-		ApiKey:  vars.ApiKey,
+		App:         app,
+		Handler:     handlers.NewLoggerHandler(svc),
+		ApiKey:      vars.ApiKey,
+		AllowedApps: allowedApps,
 	}
 
 	routes.SetupRoutes(deps)

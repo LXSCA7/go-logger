@@ -7,9 +7,10 @@ import (
 )
 
 type RouteDependencies struct {
-	App     *fiber.App
-	Handler *handlers.LoggerHandler
-	ApiKey  string
+	App         *fiber.App
+	Handler     *handlers.LoggerHandler
+	ApiKey      string
+	AllowedApps []string
 }
 
 func SetupRoutes(deps RouteDependencies) {
@@ -20,5 +21,5 @@ func SetupRoutes(deps RouteDependencies) {
 	deps.App.Get("/logs", middlewares.ApiKeyAuth(deps.ApiKey))
 	deps.App.Get("/logs/:appName", middlewares.ApiKeyAuth(deps.ApiKey), deps.Handler.ListAllByAppName)
 
-	deps.App.Post("/log", middlewares.ApiKeyAuth(deps.ApiKey), deps.Handler.Log)
+	deps.App.Post("/log", middlewares.ApiKeyAuth(deps.ApiKey), middlewares.LoggerAuth(deps.AllowedApps), deps.Handler.Log)
 }
