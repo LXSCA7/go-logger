@@ -7,19 +7,22 @@ import (
 )
 
 type RouteDependencies struct {
-	App         *fiber.App
-	Handler     *handlers.LoggerHandler
-	ApiKey      string
-	AllowedApps []string
+	App                *fiber.App
+	Handler            *handlers.LoggerHandler
+	ApiKey             string
+	AllowedApps        []string
+	SkipAppValidations bool
 }
 
 func SetupRoutes(deps RouteDependencies) {
-	deps.App.Get("/", middlewares.ApiKeyAuth(deps.ApiKey), func(c *fiber.Ctx) error {
+	deps.App.Use(middlewares.ApiKeyAuth(deps.ApiKey))
+	deps.App.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON("hello, world!")
 	})
 
-	deps.App.Get("/logs", middlewares.ApiKeyAuth(deps.ApiKey))
-	deps.App.Get("/logs/:appName", middlewares.ApiKeyAuth(deps.ApiKey), deps.Handler.ListAllByAppName)
+	// deps.App.Get("/logs", implement)
+	deps.App.Get("/logs/:appName", deps.Handler.ListAllByAppName)
 
-	deps.App.Post("/log", middlewares.ApiKeyAuth(deps.ApiKey), middlewares.LoggerAuth(deps.AllowedApps), deps.Handler.Log)
+	deps.App.Post("/log", middlewares.ApplicationsAuth(deps.AllowedApps))
+
 }
