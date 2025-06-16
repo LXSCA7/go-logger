@@ -132,4 +132,11 @@ func Validate(vars *models.EnvVars) {
 			"This is UNSAFE and CAN NOT be used in PRODUCTION environments.\n" +
 			"For fix this error, change the environment variable 'SKIP_APP_VALIDATIONS' to 'false' and set the allowed apps on 'apps.json'\x1b[0m")
 	}
+
+	if vars.ApiKey == "" {
+		panic("\n\x1b[31m" +
+			"Error: Environment variable 'API_KEY' can not be empty.\n" +
+			"\x1b[33mDid you copy the '.env.example' file to '.env'? Read the README.md for more information.\n" +
+			"\x1b[31mFor fix this error, fill in the environment variable (.env file).\x1b[0m")
+	}
 }
