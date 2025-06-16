@@ -12,6 +12,10 @@ import (
 func main() {
 	app := fiber.New()
 	vars, err := config.LoadEnvVars()
+	if err != nil {
+		panic(err.Error())
+	}
+
 	config.Validate(vars)
 	allowedApps := config.LoadApps(vars.SkipAppValidations)
 	db, err := config.ConnectDB(vars)
