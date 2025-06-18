@@ -6,4 +6,5 @@ type LoggerService interface {
 	CreateLog(logPayload *models.LogPayload) error
 	GetLogByAppName(appName string) (*[]models.Log, error)
 	ListAllLogs() (*[]models.Log, error)
+	ListApps() ([]string, error)
 }

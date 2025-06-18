@@ -47,3 +47,16 @@ func (h *LoggerHandler) ListAllByAppName(c *fiber.Ctx) error {
 		"logs": logs,
 	})
 }
+
+func (h *LoggerHandler) ListApps(c *fiber.Ctx) error {
+	apps, err := h.loggerService.ListApps()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"apps": apps,
+	})
+}

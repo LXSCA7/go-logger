@@ -6,4 +6,5 @@ type GormLoggerRepository interface {
 	Log(*models.Log) error
 	ListAll() (*[]models.Log, error)
 	ListByAppName(appName string) (*[]models.Log, error)
+	ListAllApps() ([]string, error)
 }

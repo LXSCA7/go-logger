@@ -29,3 +29,7 @@ func (l *loggerServiceImpl) GetLogByAppName(appName string) (*[]models.Log, erro
 func (l *loggerServiceImpl) ListAllLogs() (*[]models.Log, error) {
 	return l.repo.ListAll()
 }
+
+func (l *loggerServiceImpl) ListApps() ([]string, error) {
+	return l.repo.ListAllApps()
+}

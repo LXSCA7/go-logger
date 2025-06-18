@@ -31,3 +31,13 @@ func (g *gormLoggerRepository) ListByAppName(appName string) (*[]models.Log, err
 
 	return &logs, nil
 }
+
+func (g *gormLoggerRepository) ListAllApps() ([]string, error) {
+	var apps []string
+	err := g.db.Model(&models.Log{}).Distinct("application_name").Pluck("application_name", &apps).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return apps, nil
+}
